@@ -250,6 +250,12 @@ Create databases
     create database scm DEFAULT CHARACTER SET utf8;
     grant all on scm.* TO "scm"@"%" IDENTIFIED BY "scm_password";
 
+    create database oozie DEFAULT CHARACTER SET utf8;
+    grant all on oozie.* TO "oozie"@"%" IDENTIFIED BY "oozie_password";
+
+    create database hue DEFAULT CHARACTER SET utf8;
+    grant all on hue.* TO "hue"@"%" IDENTIFIED BY "hue_password";
+
     show databases;
     exit
 ```
