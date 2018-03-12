@@ -211,3 +211,52 @@ Master_SSL_Verify_Server_Cert: No
              Master_Server_Id: 1
 1 row in set (0.00 sec)    
 ```
+
+# Cloudera Manager Install Lab
+
+```
+    cd /tmp
+    wget -c https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/cloudera-manager.repo
+    vi cloudera-manager.repo    
+```
+
+Replace the base url
+
+```
+    baseurl=https://archive.cloudera.com/cm5/redhat/7/x86_64/cm/5.9.3/
+```
+
+Save the file
+
+```
+    cp cloudera-manager.repo /etc/yum.repos.d/
+    yum install -y cloudera-manager-daemons cloudera-manager-server
+```
+
+Create databases
+
+```
+    mysql -uroot -p
+
+    create database amon DEFAULT CHARACTER SET utf8;
+    grant all on amon.* TO "amon"@"%" IDENTIFIED BY "amon_password";
+
+    create database rman DEFAULT CHARACTER SET utf8;
+    grant all on rman.* TO "rman"@"%" IDENTIFIED BY "rman_password";
+
+    create database metastore DEFAULT CHARACTER SET utf8;
+    grant all on metastore.* TO "hive"@"%" IDENTIFIED BY "hive_password";
+
+    create database scm DEFAULT CHARACTER SET utf8;
+    grant all on scm.* TO "scm"@"%" IDENTIFIED BY "scm_password";
+
+    show databases;
+    exit
+```
+
+Prepare CM database:
+
+```
+    /usr/share/cmf/schema/scm_prepare_database.sh mysql scm scm scm_password -hip-172-31-2-135.eu-west-1.compute.internal
+    systemctl start cloudera-scm-server
+```
