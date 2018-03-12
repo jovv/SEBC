@@ -118,4 +118,23 @@ On RHEL, disable the tuned service:
     systemctl start ntpd
     systemctl status ntpd
     chkconfig ntpd on
+    less /etc/ntp.conf
+    ntpdate -u 0.rhel.pool.ntp.org
+    hwclock --systohc
 ```
+
+### 9. Disable SELinux
+
+```
+    getenforce
+    vi /etc/selinux/config
+```
+
+Modify _enforcing_ to _permissive_
+
+Save the file
+
+```
+    setenforce 0
+```
+
