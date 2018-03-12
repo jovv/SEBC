@@ -1,0 +1,164 @@
+# MySQL/MariaDB Installation Lab
+
+If you are using RHEL/CentOS 7.x, use MariaDB.
+
+## Configure MariaDB with a replica server
+
+```
+    yum install -y mariadb-server
+
+    sudo service mariadb start
+    sudo service mariadb stop
+    sudo service mariadb status
+    ls -lAh /var/lib/mysql/
+    mv /var/lib/mysql/ib_logfile0 /tmp
+    mv /var/lib/mysql/ib_logfile1 /tmp
+    ls -lAh /var/lib/mysql/
+
+    less /etc/my.cnf
+    cp /etc/my.cnf /etc/my.cnf.bkp
+    vi /etc/my.cnf
+```    
+
+Add recommended CLoudera options:
+
+```
+    [mysqld]
+    transaction-isolation = READ-COMMITTED
+    # Disabling symbolic-links is recommended to prevent assorted security risks;
+    # to do so, uncomment this line:
+    # symbolic-links = 0
+
+    key_buffer = 16M
+    key_buffer_size = 32M
+    max_allowed_packet = 32M
+    thread_stack = 256K
+    thread_cache_size = 64
+    query_cache_limit = 8M
+    query_cache_size = 64M
+    query_cache_type = 1
+
+    max_connections = 550
+    #expire_logs_days = 10
+    #max_binlog_size = 100M
+
+    #log_bin should be on a disk with enough free space. Replace '/var/lib/mysql/mysql_binary_log' with an appropriate path for your system
+    #and chown the specified folder to the mysql user.
+    log_bin=/var/lib/mysql/mysql_binary_log
+
+    binlog_format = mixed
+
+    read_buffer_size = 2M
+    read_rnd_buffer_size = 16M
+    sort_buffer_size = 8M
+    join_buffer_size = 8M
+
+    # InnoDB settings
+    innodb_file_per_table = 1
+    innodb_flush_log_at_trx_commit  = 2
+    innodb_log_buffer_size = 64M
+    innodb_buffer_pool_size = 4G
+    innodb_thread_concurrency = 8
+    innodb_flush_method = O_DIRECT
+    innodb_log_file_size = 512M
+
+    [mysqld_safe]
+    log-error=/var/log/mariadb/mariadb.log
+    pid-file=/var/run/mariadb/mariadb.pid
+```
+
+Start at boot:
+
+```
+    systemctl enable mariadb
+```
+
+Install JDK
+
+```
+    wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.rpm"
+    rpm -ivh jdk-8u161-linux-x64.rpm
+    java -version
+    echo "export JAVA_HOME=/usr/java/latest" >> /root/.bashrc
+    source /root/.bashrc
+    printenv JAVA_HOME
+```
+
+Install JDBC driver
+
+```
+    yum install -y wget
+    wget -c https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.45.tar.gz
+    tar xzvf mysql-connector-java-5.1.45.tar.gz
+    mkdir -p /usr/share/java/
+    cp mysql-connector-java-5.1.45/mysql-connector-java-5.1.45-bin.jar /usr/share/java/mysql-connector-java.jar
+```
+
+Secure db install:
+
+```
+    systemctl start mariadb
+    /usr/bin/mysql_secure_installation
+```
+
+Setup replication
+
+```
+    vi /etc/my.cnf
+```
+
+Add under [mysqld]
+
+```
+log-bin
+server_id=1
+log-basename=master1
+bind-address=ip-172-31-2-135.eu-west-1.compute.internal
+```
+
+Restart db
+
+```
+    systemctl restart mariadb
+    mysql -uroot -p
+
+    GRANT REPLICATION SLAVE ON *.* TO 'root'@'ip-172-31-15-191.eu-west-1.compute.internal' IDENTIFIED BY 'jovv';
+    SET GLOBAL binlog_format = 'ROW';
+    FLUSH TABLES WITH READ LOCK;
+```
+
+In a second teerminal session:
+
+```
+    mysql -uroot -p
+    SHOW MASTER STATUS;
+```
+
+Close the second session.
+In the first session:
+
+```
+    UNLOCK TABLES;
+    exit
+```
+
+On the replica server:
+
+```
+    vi /etc/my.cnf
+```
+
+Add under [mysqld]
+
+```
+log-bin
+server_id=2
+```
+
+
+```
+    mysql -uroot -p
+    CHANGE MASTER TO MASTER_HOST='ip-172-31-2-135.eu-west-1.compute.internal', MASTER_USER='root', MASTER_PASSWORD='jovv', MASTER_LOG_FILE='mysql_binary_log.000002', MASTER_LOG_POS=427;
+    START SLAVE;
+    SHOW SLAVE STATUS \G
+```
