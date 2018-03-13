@@ -11,7 +11,7 @@
     hdfs dfs -chown ec2-user:ec2-user /user/ec2-user/JeKuOrdina
     exit
 
-    hadoop jar /opt/cloudera/parcels/CDH/lib/hadoop-0.20-mapreduce/hadoop-examples.jar teragen 5242880 /user/jovv/
+    hadoop jar /opt/cloudera/parcels/CDH/lib/hadoop-0.20-mapreduce/hadoop-examples.jar teragen 5242880 /user/ec2-user/jovv/
     hdfs dfs -ls -h /user/ec2-user/jovv
 ```
 
