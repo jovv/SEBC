@@ -5,7 +5,7 @@
 Stop
 
 ```
-    curl -X POST -u jovv:cloudera 'http://ec2-34-242-187-43.eu-west-1.compute.amazonaws.com:7180/api/v14/clusters/jovv/services/hive/commands/stop'
+    curl -X POST -u user:pw 'http://ec2-34-242-187-43.eu-west-1.compute.amazonaws.com:7180/api/v14/clusters/jovv/services/hive/commands/stop'
 ```
 
 Output
@@ -25,7 +25,7 @@ Output
 Start
 
 ```
-    curl -X POST -u jovv:cloudera 'http://ec2-34-242-187-43.eu-west-1.compute.amazonaws.com:7180/api/v14/clusters/jovv/services/hive/commands/start'
+    curl -X POST -u user:pw 'http://ec2-34-242-187-43.eu-west-1.compute.amazonaws.com:7180/api/v14/clusters/jovv/services/hive/commands/start'
 ```
 
 Output
@@ -45,7 +45,7 @@ Output
 Status
 
 ```
-    curl -X POST -u jovv:cloudera 'http://ec2-34-242-187-43.eu-west-1.compute.amazonaws.com:7180/api/v14/clusters/jovv/services/hive'
+    curl -X POST -u user:pw 'http://ec2-34-242-187-43.eu-west-1.compute.amazonaws.com:7180/api/v14/clusters/jovv/services/hive'
 ```
 
 Output

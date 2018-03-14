@@ -3,7 +3,7 @@
 ## Query cluster deployment
 
 ```
-    curl -u jovv:cloudera 'http://ec2-34-242-187-43.eu-west-1.compute.amazonaws.com:7180/api/v2/cm/deployment'
+    curl -u user:pw 'http://ec2-34-242-187-43.eu-west-1.compute.amazonaws.com:7180/api/v2/cm/deployment'
 ```
 
 Output:
