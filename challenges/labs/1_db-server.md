@@ -33,11 +33,11 @@ Databases:
 Version:
 
 ```
-    MariaDB [(none)]> SELECT version();
+    MariaDB [(none)]> select VERSION();
     +----------------+
-    | version()      |
+    | VERSION()      |
     +----------------+
-    | 5.5.56-MariaDB |
+    | 5.5.59-MariaDB |
     +----------------+
     1 row in set (0.00 sec)
 ```
